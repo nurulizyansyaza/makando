@@ -156,7 +156,12 @@ class ShopController extends Controller
         
         $cart = Cart::find(session('cart_id'));
 
+        if (!$cart) {
+            return redirect()->route('dashboard')->with('alert', 'Invalid cart.');
+        }
+
         $redeem_points = auth()->user()->customer->total_points ?? 0;
+
         if ($cart->redeem_points) {
             if ($cart->total_price < number_format(auth()->user()->customer->total_points/100, 2)) {
                 $redeem_points = $cart->total_price*100;
