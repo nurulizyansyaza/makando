@@ -37,4 +37,9 @@ class Menu extends Model
     {
         return $this->belongsTo(Type::class);
     }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 }

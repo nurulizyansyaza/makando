@@ -166,6 +166,11 @@ class MenuController extends Controller
     {
         $menu = Menu::with('image')->findOrFail($id);
 
+        if ($menu->orderItems()->exists()) {
+            return redirect()->route('dashboard.management.menu.index')
+                ->with('alert', 'Menu cannot be deleted because it is associated with existing orders.');
+        }
+        
         if ($menu->image) {
             Storage::disk('public')->delete($menu->image->path);
             $menu->image->delete();
