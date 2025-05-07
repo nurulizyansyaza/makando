@@ -63,27 +63,28 @@
                                             {{ $restaurant->address ? $restaurant->address : '-' }}
                                         </td>
                                         <td class="px-4 py-3 text-sm">
-                                            @if ($restaurant->status === 'Inactive')
+                                            @if ($restaurant->status === config('constant.status.restaurant.inactive'))
                                                 @if ($restaurant->is_inactive)
-                                                    <span
-                                                        class="bg-red-200 text-red-800 dark:text-red-800 rounded-full py-1 px-3 text-xs font-semibold">Inactive
-                                                        (7+ days)
+                                                    <span class="bg-red-200 text-red-800 dark:text-red-800 rounded-full py-1 px-3 text-xs font-semibold">
+                                                        Inactive (7+ days)
                                                     </span>
                                                 @else
-                                                    <span
-                                                        class="bg-yellow-200 text-yellow-800 dark:text-yellow-800 rounded-full py-1 px-3 text-xs font-semibold">Inactive
-                                                        (Less than 7 days)</span>
+                                                    <span class="bg-yellow-200 text-yellow-800 dark:text-yellow-800 rounded-full py-1 px-3 text-xs font-semibold">
+                                                        Inactive (Less than 7 days)
+                                                    </span>
                                                 @endif
-                                            @elseif ($restaurant->status === 'Pending')
-                                                <span
-                                                    class="bg-yellow-200 text-yellow-800 dark:text-yellow-800 rounded-full py-1 px-3 text-xs font-semibold">Pending
-                                                    Approval</span>
-                                            @elseif ($restaurant->status === 'Banned')
-                                                <span
-                                                    class="bg-red-200 text-red-800 dark:text-red-800 rounded-full py-1 px-3 text-xs font-semibold">Banned</span>
+                                            @elseif ($restaurant->status === config('constant.status.restaurant.pending'))
+                                                <span class="bg-yellow-200 text-yellow-800 dark:text-yellow-800 rounded-full py-1 px-3 text-xs font-semibold">
+                                                    Pending Approval
+                                                </span>
+                                            @elseif ($restaurant->status === config('constant.status.restaurant.banned'))
+                                                <span class="bg-red-200 text-red-800 dark:text-red-800 rounded-full py-1 px-3 text-xs font-semibold">
+                                                    Banned
+                                                </span>
                                             @else
-                                                <span
-                                                    class="bg-green-200 text-green-800 dark:text-green-800 rounded-full py-1 px-3 text-xs font-semibold">Active</span>
+                                                <span class="bg-green-200 text-green-800 dark:text-green-800 rounded-full py-1 px-3 text-xs font-semibold">
+                                                    Active
+                                                </span>
                                             @endif
                                         </td>
                                         <td class="px-4 py-3 text-sm text-left text-neutral-800 dark:text-neutral-200">
@@ -107,7 +108,7 @@
                                             <div class="flex items-center justify-end gap-2">
                                                 <x-link
                                                     href="{{ route('dashboard.management.restaurant.show', $restaurant->id) }}">{{ __('View') }}</x-link>
-                                                @if (auth()->user()->hasRole('Admin') || (auth()->user()->hasRole('Restaurant Manager') && $restaurant->status !== 'Banned' && $restaurant->status !== 'Pending'))
+                                                @if (auth()->user()->hasRole('Admin') || (auth()->user()->hasRole('Restaurant Manager') && $restaurant->status !== config('constant.status.restaurant.banned') && $restaurant->status !== config('constant.status.restaurant.pending')))
                                                     <x-link href="{{ route('dashboard.management.restaurant.edit', $restaurant->id) }}">{{ __('Edit') }}</x-link>
                                                 @endif
                                                 <form id="delete-form-{{ $restaurant->id }}" method="post"

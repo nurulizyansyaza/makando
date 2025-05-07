@@ -42,7 +42,7 @@
                     <div>
                         <x-text class="mb-1"><strong>Status:</strong></x-text>
                         <x-text>
-                            @if ($restaurant->status === 'Inactive')
+                            @if ($restaurant->status === config('constant.status.restaurant.inactive'))
                                 @if ($restaurant->is_inactive)
                                     <span
                                         class="bg-red-200 text-red-800 dark:text-red-800 rounded-full py-1 px-3 text-xs font-semibold">Inactive
@@ -52,11 +52,11 @@
                                         class="bg-yellow-200 text-yellow-800 dark:text-yellow-800 rounded-full py-1 px-3 text-xs font-semibold">Inactive
                                         (Less than 7 days)</span>
                                 @endif
-                            @elseif ($restaurant->status === 'Pending')
+                            @elseif ($restaurant->status === config('constant.status.restaurant.pending'))
                                 <span
                                     class="bg-yellow-200 text-yellow-800 dark:text-yellow-800 rounded-full py-1 px-3 text-xs font-semibold">Pending
                                     Approval</span>
-                            @elseif ($restaurant->status === 'Banned')
+                            @elseif ($restaurant->status === config('constant.status.restaurant.banned'))
                                 <span
                                     class="bg-red-200 text-red-800 dark:text-red-800 rounded-full py-1 px-3 text-xs font-semibold">Banned</span>
                             @else
@@ -93,7 +93,7 @@
                 <x-link href="{{ route('dashboard.management.restaurant.index') }}"
                     style="outline">{{ __('Back') }}</x-link>
                 <div class="flex items-center gap-2">
-                    @if (auth()->user()->hasRole('Admin') || (auth()->user()->hasRole('Restaurant Manager') && $restaurant->status !== 'Banned' && $restaurant->status !== 'Pending'))
+                    @if (auth()->user()->hasRole('Admin') || (auth()->user()->hasRole('Restaurant Manager') && $restaurant->status !== config('constant.status.restaurant.banned') && $restaurant->status !== config('constant.status.restaurant.pending')))
                         <x-link href="{{ route('dashboard.management.restaurant.edit', $restaurant->id) }}"
                             style="primary">{{ __('Edit') }}</x-link>
                     @endif

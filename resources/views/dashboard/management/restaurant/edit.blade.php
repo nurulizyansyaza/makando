@@ -1,22 +1,6 @@
 @php
     $title = 'Restaurant';
     $subtitle = 'Update restaurant details';
-
-    $user = auth()->user();
-    $availableStatuses = [];
-
-    if ($user->hasRole('Admin')) {
-        $availableStatuses = config('constant.status.restaurant');
-    } elseif ($user->hasRole('Restaurant Manager')) {
-        if ($restaurant->status === 'Banned') {
-            abort(403, 'You cannot edit a banned restaurant.');
-        }
-
-        $availableStatuses = [
-            'Active' => 'Active',
-            'Inactive' => 'Inactive',
-        ];
-    }
 @endphp
 
 <x-layouts.dashboard>

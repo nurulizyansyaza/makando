@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Restaurant;
 use App\Models\Category;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 
 class RestaurantController extends Controller
 {
@@ -83,9 +84,13 @@ class RestaurantController extends Controller
      */
     public function show(string $id)
     {
-        return view('dashboard.management.restaurant.show', [
-            'restaurant' => Restaurant::findOrFail($id)
-        ]);
+        $restaurant = Restaurant::find($id);
+
+        if (!$restaurant) {
+            return redirect()->route('dashboard.management.restaurant.index')->with('alert', 'Restaurant not found.');
+        }
+
+        return view('dashboard.management.restaurant.show', compact('restaurant'));
     }
 
     /**
@@ -96,7 +101,7 @@ class RestaurantController extends Controller
         $restaurant = Restaurant::findOrFail($id);
         $user = auth()->user();
 
-        if ($user->hasRole('Restaurant Manager') && $restaurant->status === 'Banned') {
+        if ($user->hasRole('Restaurant Manager') && $restaurant->status === config('constant.status.restaurant.banned')) {
             abort(403, 'You cannot edit a banned restaurant.');
         }
 
@@ -106,8 +111,8 @@ class RestaurantController extends Controller
         } else { 
             $categories = Category::where('user_id', auth()->id())->get();
             $availableStatuses = [
-                'Active' => 'Active',
-                'Inactive' => 'Inactive',
+                config('constant.status.restaurant.active') => config('constant.status.restaurant.active'),
+                config('constant.status.restaurant.inactive') => config('constant.status.restaurant.inactive'),
             ];
         }
 
@@ -123,7 +128,7 @@ class RestaurantController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'address' => 'required|string',
-            'status' => 'required|in:Active,Inactive,Pending,Banned',
+            'status' => ['required',Rule::in(array_values(config('constant.status.restaurant')))],
             'is_opened' => 'required|boolean',
         ]);
     
@@ -137,9 +142,9 @@ class RestaurantController extends Controller
             'is_opened' => $validated['is_opened'],
         ];
     
-        if ($validated['status'] === 'Inactive' && !$restaurant->inactive_at) {
+        if ($validated['status'] === config('constant.status.restaurant.inactive') && !$restaurant->inactive_at) {
             $updateData['inactive_at'] = now();
-        } elseif ($validated['status'] === 'Active') {
+        } elseif ($validated['status'] === config('constant.status.restaurant.active')) {
             $updateData['inactive_at'] = null;
         }
 
@@ -188,7 +193,7 @@ class RestaurantController extends Controller
     public function updateApproval(Request $request, string $id)
     {
         $validated = $request->validate([
-            'status' => 'required|in:Active,Banned',
+            'status' => ['required', Rule::in([config('constant.status.restaurant.active'), config('constant.status.restaurant.banned'),])],
         ]);
 
         $restaurant = Restaurant::findOrFail($id);
